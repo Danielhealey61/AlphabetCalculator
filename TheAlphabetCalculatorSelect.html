@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Calculator</title>
+    <style>
+        /* Styles remain unchanged */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background: url('https://www.travelingigloo.com/wp-content/uploads/2022/03/Northern-Lights-Fairbanks-5-scaled.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            color: #fff;
+            flex-direction: column;
+            padding-top: 20px;
+        }
+        #calculator {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 350px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background-color: #667eea;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #764ba2;
+        }
+        .result-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            word-wrap: break-word;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: none; /* Initially hidden */
+        }
+        #normalValueBox { background-color: rgba(102, 126, 234, 0.7); }
+        #reverseValueBox { background-color: rgba(118, 75, 162, 0.7); }
+        #reducedValueBox { background-color: rgba(70, 130, 180, 0.7); }
+        #reverseReducedValueBox { background-color: rgba(219, 112, 147, 0.7); }
+        #x6OrdinalBox { background-color: rgba(255, 165, 0, 0.7); }
+        #x6ReverseBox { background-color: rgba(0, 255, 127, 0.7); }
+        #thirtySixOrdinalBox { background-color: rgba(255, 99, 71, 0.7); }
+        #thirtySixReverseBox { background-color: rgba(173, 216, 230, 0.7); }
+        #latinBox { background-color: rgba(255, 105, 180, 0.7); }
+        #chaldeanBox { background-color: rgba(123, 104, 238, 0.7); }
+
+        table.cipher-table {
+            width: 100%;
+            margin-bottom: 15px;
+            border-collapse: collapse;
+        }
+        table.cipher-table td {
+            padding: 5px 0;
+        }
+        .cipher-option {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .cipher-option input {
+            margin-right: 8px;
+            transform: scale(0.8);
+        }
+        #exportButton {
+            width: auto;
+            padding: 8px 16px;
+            margin-top: 15px;
+            font-size: 14px;
+            background-color: #28a745;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #resultsTable {
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-collapse: collapse;
+            text-align: center;
+        }
+        #resultsTable th, #resultsTable td {
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        #resultsTable th { background-color: rgba(0, 0, 0, 0.5); color: #fff; }
+    </style>
+</head>
+<body>
+    <div id="calculator">
+        <h2>Alphabet Calculator</h2>
+        <input type="text" id="wordInput" placeholder="Enter a word">
+        <table class="cipher-table">
+            <tr>
+                <td><div class="cipher-option"><input type="checkbox" id="normalCipher" checked> English Ordinal</div></td>
+                <td><div class="cipher-option"><input type="checkbox" id="reverseCipher"> Reverse Ordinal</div></td>
+            </tr>
+            <tr>
+                <td><div class="cipher-option"><input type="checkbox" id="reductionCipher"> Reduction</div></td>
+                <td><div class="cipher-option"><input type="checkbox" id="reverseReductionCipher"> Reverse Reduction</div></td>
+            </tr>
+            <tr>
+                <td><div class="cipher-option"><input type="checkbox" id="x6OrdinalCipher"> x6 Ordinal</div></td>
+                <td><div class="cipher-option"><input type="checkbox" id="x6ReverseCipher"> x6 Reverse</div></td>
+            </tr>
+            <tr>
+                <td><div class="cipher-option"><input type="checkbox" id="thirtySixOrdinalCipher"> 36 Ordinal</div></td>
+                <td><div class="cipher-option"><input type="checkbox" id="thirtySixReverseCipher"> 36 Reverse</div></td>
+            </tr>
+            <tr>
+                <td><div class="cipher-option"><input type="checkbox" id="latinCipher"> Latin</div></td>
+                <td><div class="cipher-option"><input type="checkbox" id="chaldeanCipher"> Chaldean</div></td>
+            </tr>
+        </table>
+        <button onclick="calculateValues()">Calculate Values</button>
+        <div id="normalValueBox" class="result-box"></div>
+        <div id="reverseValueBox" class="result-box"></div>
+        <div id="reducedValueBox" class="result-box"></div>
+        <div id="reverseReducedValueBox" class="result-box"></div>
+        <div id="x6OrdinalBox" class="result-box"></div>
+        <div id="x6ReverseBox" class="result-box"></div>
+        <div id="thirtySixOrdinalBox" class="result-box"></div>
+        <div id="thirtySixReverseBox" class="result-box"></div>
+        <div id="latinBox" class="result-box"></div>
+        <div id="chaldeanBox" class="result-box"></div>
+    </div>
+
+    <button id="exportButton" onclick="exportTableToExcel('resultsTable', 'alphabet_calculations')">Export to Excel</button>
+
+    <table id="resultsTable">
+        <thead>
+            <tr id="resultsHeader">
+                <th>Word</th>
+                <!-- Dynamic column headers will be added here -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script>
+        function calculateValues() {
+            let word = document.getElementById("wordInput").value.toLowerCase().replace(/[^a-z]/g, '');
+            if (word === '') {
+                clearResults();
+                return;
+            }
+
+            let normalValue = 0;
+            let reverseValue = 0;
+            let reducedValue = 0;
+            let reverseReducedValue = 0;
+            let x6OrdinalValue = 0;
+            let x6ReverseValue = 0;
+            let thirtySixOrdinalValue = 0;
+            let thirtySixReverseValue = 0;
+            let latinValue = 0;
+            let chaldeanValue = 0;
+
+            const reductionValues = {
+                a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9,
+                j: 1, k: 2, l: 3, m: 4, n: 5, o: 6, p: 7, q: 8, r: 9,
+                s: 1, t: 2, u: 3, v: 4, w: 5, x: 6, y: 7, z: 8
+            };
+
+            const reverseReductionValues = {
+                a: 8, b: 7, c: 6, d: 5, e: 4, f: 3, g: 2, h: 1, i: 9,
+                j: 8, k: 7, l: 6, m: 5, n: 4, o: 3, p: 2, q: 1, r: 9,
+                s: 8, t: 7, u: 6, v: 5, w: 4, x: 3, y: 2, z: 1
+            };
+
+            const thirtySixOrdinalValues = {
+                a: 36, b: 37, c: 38, d: 39, e: 40, f: 41, g: 42, h: 43, i: 44,
+                j: 45, k: 46, l: 47, m: 48, n: 49, o: 50, p: 51, q: 52, r: 53,
+                s: 54, t: 55, u: 56, v: 57, w: 58, x: 59, y: 60, z: 61
+            };
+
+            const thirtySixReverseValues = {
+                z: 36, y: 37, x: 38, w: 39, v: 40, u: 41, t: 42, s: 43, r: 44,
+                q: 45, p: 46, o: 47, n: 48, m: 49, l: 50, k: 51, j: 52, i: 53,
+                h: 54, g: 55, f: 56, e: 57, d: 58, c: 59, b: 60, a: 61
+            };
+
+            const latinValues = {
+                a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, k: 10, l: 20, m: 30, n: 40, 
+                o: 50, p: 60, q: 70, r: 80, s: 90, t: 100, u: 200, x: 300, y: 400, z: 500, 
+                j: 600, v: 700, "&": 800, w: 900
+            };
+
+            const chaldeanValues = {
+                a: 1, b: 2, c: 3, d: 4, e: 5, f: 8, g: 3, h: 5, i: 1, j: 1,
+                k: 2, l: 3, m: 4, n: 5, o: 7, p: 8, q: 1, r: 2, s: 3, t: 4,
+                u: 6, v: 6, w: 6, x: 5, y: 1, z: 7
+            };
+
+            let tableHeaders = document.getElementById("resultsHeader");
+            tableHeaders.innerHTML = '<th>Word</th>'; // Reset the headers
+            let tableRow = '';
+
+            if (document.getElementById("normalCipher").checked) {
+                normalValue += calculateValue(word, 1);
+                showResult("normalValueBox", "English Ordinal: " + normalValue);
+                tableHeaders.innerHTML += '<th>English Ordinal</th>';
+                tableRow += `<td>${normalValue}</td>`;
+            } else {
+                hideResult("normalValueBox");
+            }
+
+            if (document.getElementById("reverseCipher").checked) {
+                reverseValue += calculateValue(word, -1);
+                showResult("reverseValueBox", "Reverse Ordinal: " + reverseValue);
+                tableHeaders.innerHTML += '<th>Reverse Ordinal</th>';
+                tableRow += `<td>${reverseValue}</td>`;
+            } else {
+                hideResult("reverseValueBox");
+            }
+
+            if (document.getElementById("reductionCipher").checked) {
+                reducedValue += calculateCustomValue(word, reductionValues);
+                showResult("reducedValueBox", "Reduction: " + reducedValue);
+                tableHeaders.innerHTML += '<th>Reduction</th>';
+                tableRow += `<td>${reducedValue}</td>`;
+            } else {
+                hideResult("reducedValueBox");
+            }
+
+            if (document.getElementById("reverseReductionCipher").checked) {
+                reverseReducedValue += calculateCustomValue(word, reverseReductionValues);
+                showResult("reverseReducedValueBox", "Reverse Reduction: " + reverseReducedValue);
+                tableHeaders.innerHTML += '<th>Reverse Reduction</th>';
+                tableRow += `<td>${reverseReducedValue}</td>`;
+            } else {
+                hideResult("reverseReducedValueBox");
+            }
+
+            if (document.getElementById("x6OrdinalCipher").checked) {
+                x6OrdinalValue += calculateValue(word, 1) * 6;
+                showResult("x6OrdinalBox", "x6 Ordinal: " + x6OrdinalValue);
+                tableHeaders.innerHTML += '<th>x6 Ordinal</th>';
+                tableRow += `<td>${x6OrdinalValue}</td>`;
+            } else {
+                hideResult("x6OrdinalBox");
+            }
+
+            if (document.getElementById("x6ReverseCipher").checked) {
+                x6ReverseValue += calculateValue(word, -1) * 6;
+                showResult("x6ReverseBox", "x6 Reverse: " + x6ReverseValue);
+                tableHeaders.innerHTML += '<th>x6 Reverse</th>';
+                tableRow += `<td>${x6ReverseValue}</td>`;
+            } else {
+                hideResult("x6ReverseBox");
+            }
+
+            if (document.getElementById("thirtySixOrdinalCipher").checked) {
+                thirtySixOrdinalValue += calculateCustomValue(word, thirtySixOrdinalValues);
+                showResult("thirtySixOrdinalBox", "36 Ordinal: " + thirtySixOrdinalValue);
+                tableHeaders.innerHTML += '<th>36 Ordinal</th>';
+                tableRow += `<td>${thirtySixOrdinalValue}</td>`;
+            } else {
+                hideResult("thirtySixOrdinalBox");
+            }
+
+            if (document.getElementById("thirtySixReverseCipher").checked) {
+                thirtySixReverseValue += calculateCustomValue(word, thirtySixReverseValues);
+                showResult("thirtySixReverseBox", "36 Reverse: " + thirtySixReverseValue);
+                tableHeaders.innerHTML += '<th>36 Reverse</th>';
+                tableRow += `<td>${thirtySixReverseValue}</td>`;
+            } else {
+                hideResult("thirtySixReverseBox");
+            }
+
+            if (document.getElementById("latinCipher").checked) {
+                latinValue += calculateCustomValue(word, latinValues);
+                showResult("latinBox", "Latin: " + latinValue);
+                tableHeaders.innerHTML += '<th>Latin</th>';
+                tableRow += `<td>${latinValue}</td>`;
+            } else {
+                hideResult("latinBox");
+            }
+
+            if (document.getElementById("chaldeanCipher").checked) {
+                chaldeanValue += calculateCustomValue(word, chaldeanValues);
+                showResult("chaldeanBox", "Chaldean: " + chaldeanValue);
+                tableHeaders.innerHTML += '<th>Chaldean</th>';
+                tableRow += `<td>${chaldeanValue}</td>`;
+            } else {
+                hideResult("chaldeanBox");
+            }
+
+            let tableBody = document.querySelector("#resultsTable tbody");
+            let newRow = tableBody.insertRow();
+            newRow.innerHTML = `<td>${word}</td>` + tableRow;
+        }
+
+        function calculateValue(word, direction) {
+            return Array.from(word).reduce((acc, char) => {
+                let charCode = char.charCodeAt(0) - 96;
+                if (direction === -1) {
+                    charCode = 27 - charCode;
+                }
+                return acc + charCode;
+            }, 0);
+        }
+
+        function calculateCustomValue(word, values) {
+            return Array.from(word).reduce((acc, char) => {
+                if (values[char]) {
+                    return acc + values[char];
+                }
+                return acc;
+            }, 0);
+        }
+
+        function showResult(elementId, text) {
+            let element = document.getElementById(elementId);
+            element.textContent = text;
+            element.style.display = 'block';
+        }
+
+        function hideResult(elementId) {
+            let element = document.getElementById(elementId);
+            element.style.display = 'none';
+        }
+
+        function clearResults() {
+            const resultIds = [
+                "normalValueBox", "reverseValueBox", "reducedValueBox", 
+                "reverseReducedValueBox", "x6OrdinalBox", "x6ReverseBox", 
+                "thirtySixOrdinalBox", "thirtySixReverseBox", "latinBox", "chaldeanBox"
+            ];
+            resultIds.forEach(id => hideResult(id));
+        }
+
+        document.getElementById("wordInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                calculateValues();
+            }
+        });
+
+        function exportTableToExcel(tableID, filename = '') {
+            let table = document.getElementById(tableID);
+            let workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            XLSX.writeFile(workbook, filename ? `${filename}.xlsx` : 'excel_data.xlsx');
+        }
+    </script>
+</body>
+</html>
