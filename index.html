@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('https://www.travelingigloo.com/wp-content/uploads/2022/03/Northern-Lights-Fairbanks-5-scaled.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-direction: column;
+        }
+        #container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #calculator {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 350px;
+        }
+        h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background-color: #667eea;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #764ba2;
+        }
+        .result-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            word-wrap: break-word;
+            background-color: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        #normalValueBox {
+            background-color: rgba(102, 126, 234, 0.7);
+        }
+        #reverseValueBox {
+            background-color: rgba(118, 75, 162, 0.7);
+        }
+        #reducedValueBox {
+            background-color: rgba(70, 130, 180, 0.7);
+        }
+        #reverseReducedValueBox {
+            background-color: rgba(219, 112, 147, 0.7);
+        }
+        #x6OrdinalBox {
+            background-color: rgba(255, 165, 0, 0.7); /* Orange */
+        }
+        #x6ReverseBox {
+            background-color: rgba(0, 255, 127, 0.7); /* Spring Green */
+        }
+        #thirtySixOrdinalBox {
+            background-color: rgba(255, 99, 71, 0.7); /* Tomato */
+        }
+        #thirtySixReverseBox {
+            background-color: rgba(173, 216, 230, 0.7); /* Light Blue */
+        }
+        #latinBox {
+            background-color: rgba(255, 105, 180, 0.7); /* Hot Pink */
+        }
+        #chaldeanBox {
+            background-color: rgba(255, 69, 0, 0.7); /* Orange Red */
+        }
+        #exportButton {
+            width: auto;
+            padding: 8px 16px;
+            margin-top: 15px;
+            font-size: 14px;
+            background-color: #28a745; /* Green */
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #resultsTable {
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-collapse: collapse;
+            text-align: center;
+        }
+        #resultsTable th, #resultsTable td {
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        #resultsTable th {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+        #cipherTable {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 200px;
+            margin-left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #cipherTable h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        #cipherTable table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #cipherTable th, #cipherTable td {
+            padding: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 12px;
+        }
+        #cipherTable th {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        #cipherTable td {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="calculator">
+            <h2>Alphabet Calculator</h2>
+            <input type="text" id="wordInput" placeholder="Enter a word">
+            <button onclick="calculateValues()">Calculate Values</button>
+            <div id="normalValueBox" class="result-box" onclick="loadCipherTable('englishOrdinalValues')">Ordinal</div>
+            <div id="reverseValueBox" class="result-box" onclick="loadCipherTable('reverseOrdinalValues')">Reverse Ordinal</div>
+            <div id="reducedValueBox" class="result-box" onclick="loadCipherTable('reductionValues')">Reduction</div>
+            <div id="reverseReducedValueBox" class="result-box" onclick="loadCipherTable('reverseReductionValues')">Reverse Reduction</div>
+            <div id="x6OrdinalBox" class="result-box" onclick="loadCipherTable('x6OrdinalValues')">x6 Ordinal</div>
+            <div id="x6ReverseBox" class="result-box" onclick="loadCipherTable('x6ReverseValues')">x6 Reverse</div>
+            <div id="thirtySixOrdinalBox" class="result-box" onclick="loadCipherTable('thirtySixOrdinalValues')">36 Ordinal</div>
+            <div id="thirtySixReverseBox" class="result-box" onclick="loadCipherTable('thirtySixReverseValues')">36 Reverse</div>
+            <div id="latinBox" class="result-box" onclick="loadCipherTable('latinValues')">Latin</div>
+            <div id="chaldeanBox" class="result-box" onclick="loadCipherTable('chaldeanValues')">Chaldean</div>
+        </div>
+
+        <div id="cipherTable">
+            <h3>Cipher Chart</h3>
+            <table>
+                <tbody id="cipherTableBody">
+                    <!-- Rows will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button id="exportButton" onclick="exportTableToExcel('resultsTable', 'alphabet_calculations')">Export to Excel</button>
+
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>Word</th>
+                <th>Ordinal</th>
+                <th>Reverse Ordinal</th>
+                <th>Reduction</th>
+                <th>Reverse Reduction</th>
+                <th>x6 Ordinal</th>
+                <th>x6 Reverse</th>
+                <th>36 Ordinal</th>
+                <th>36 Reverse</th>
+                <th>Latin</th>
+                <th>Chaldean</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script>
+// Function to calculate values
+function calculateValues() {
+    let word = document.getElementById("wordInput").value.toLowerCase();
+    let normalValue = 0;
+    let reverseValue = 0;
+    let reducedValue = 0;
+    let reverseReducedValue = 0;
+    let x6OrdinalValue = 0;
+    let x6ReverseValue = 0;
+    let thirtySixOrdinalValue = 0;
+    let thirtySixReverseValue = 0;
+    let latinValue = 0;
+    let chaldeanValue = 0;
+
+    // Predefined values for reduction, reverse reduction, Latin, and Chaldean ciphers
+    const reductionValues = {
+        a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9,
+        j: 1, k: 2, l: 3, m: 4, n: 5, o: 6, p: 7, q: 8, r: 9,
+        s: 1, t: 2, u: 3, v: 4, w: 5, x: 6, y: 7, z: 8
+    };
+
+    const reverseReductionValues = {
+        a: 8, b: 7, c: 6, d: 5, e: 4, f: 3, g: 2, h: 1, i: 9,
+        j: 8, k: 7, l: 6, m: 5, n: 4, o: 3, p: 2, q: 1, r: 9,
+        s: 8, t: 7, u: 6, v: 5, w: 4, x: 3, y: 2, z: 1
+    };
+
+    const thirtySixOrdinalValues = {
+        a: 36, b: 37, c: 38, d: 39, e: 40, f: 41, g: 42, h: 43, i: 44,
+        j: 45, k: 46, l: 47, m: 48, n: 49, o: 50, p: 51, q: 52, r: 53,
+        s: 54, t: 55, u: 56, v: 57, w: 58, x: 59, y: 60, z: 61
+    };
+
+    const thirtySixReverseValues = {
+        z: 36, y: 37, x: 38, w: 39, v: 40, u: 41, t: 42, s: 43, r: 44,
+        q: 45, p: 46, o: 47, n: 48, m: 49, l: 50, k: 51, j: 52, i: 53,
+        h: 54, g: 55, f: 56, e: 57, d: 58, c: 59, b: 60, a: 61
+    };
+
+    const latinValues = {
+        a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, k: 10, l: 20, m: 30, n: 40, 
+        o: 50, p: 60, q: 70, r: 80, s: 90, t: 100, u: 200, x: 300, y: 400, z: 500, 
+        j: 600, v: 700, "&": 800, w: 900
+    };
+
+    const chaldeanValues = {
+        a: 1, b: 2, c: 3, d: 4, e: 5, f: 8, g: 3, h: 5, i: 1, j: 1, k: 2, l: 3, m: 4, n: 5, 
+        o: 7, p: 8, q: 1, r: 2, s: 3, t: 4, u: 6, v: 6, w: 6, x: 5, y: 1, z: 7
+    };
+
+    // Helper function to convert numbers into their cipher value
+    function convertNumberToCipher(number) {
+        return parseInt(number); // Use numbers as they are
+    }
+
+    // Process the word input and extract consecutive numbers
+    let i = 0;
+    while (i < word.length) {
+        let char = word[i];
+
+        if (/\d/.test(char)) {
+            // Handle consecutive numbers
+            let numStr = '';
+            while (i < word.length && /\d/.test(word[i])) {
+                numStr += word[i];
+                i++;
+            }
+            let numberValue = convertNumberToCipher(numStr);
+            normalValue += numberValue;
+            reverseValue += numberValue;
+            reducedValue += numberValue;
+            reverseReducedValue += numberValue;
+            x6OrdinalValue += numberValue ;
+            x6ReverseValue += numberValue ;
+            thirtySixOrdinalValue += numberValue;
+            thirtySixReverseValue += numberValue;
+            latinValue += numberValue;
+            chaldeanValue += numberValue;
+        } else if (reductionValues[char] !== undefined) {
+            let charCode = word.charCodeAt(i) - 96;
+            normalValue += charCode;
+            reverseValue += 27 - charCode;
+            reducedValue += reductionValues[char];
+            reverseReducedValue += reverseReductionValues[char];
+            x6OrdinalValue += charCode * 6;
+            x6ReverseValue += (27 - charCode) * 6;
+            thirtySixOrdinalValue += thirtySixOrdinalValues[char];
+            thirtySixReverseValue += thirtySixReverseValues[char];
+            latinValue += latinValues[char] || 0;
+            chaldeanValue += chaldeanValues[char] || 0;
+            i++;
+        } else {
+            i++;
+        }
+    }
+
+    // Display results in individual boxes
+    document.getElementById("normalValueBox").textContent = "Ordinal: " + normalValue;
+    document.getElementById("reverseValueBox").textContent = "Reverse Ordinal: " + reverseValue;
+    document.getElementById("reducedValueBox").textContent = "Reduction: " + reducedValue;
+    document.getElementById("reverseReducedValueBox").textContent = "Reverse Reduction: " + reverseReducedValue;
+    document.getElementById("x6OrdinalBox").textContent = "x6 Ordinal: " + x6OrdinalValue;
+    document.getElementById("x6ReverseBox").textContent = "x6 Reverse: " + x6ReverseValue;
+    document.getElementById("thirtySixOrdinalBox").textContent = "36 Ordinal: " + thirtySixOrdinalValue;
+    document.getElementById("thirtySixReverseBox").textContent = "36 Reverse: " + thirtySixReverseValue;
+    document.getElementById("latinBox").textContent = "Latin: " + latinValue;
+    document.getElementById("chaldeanBox").textContent = "Chaldean: " + chaldeanValue;
+
+    // Add the calculated values to the results table
+    let tableBody = document.querySelector("#resultsTable tbody");
+    let newRow = tableBody.insertRow();
+
+    newRow.innerHTML = 
+        `<td>${word}</td>
+        <td>${normalValue}</td>
+        <td>${reverseValue}</td>
+        <td>${reducedValue}</td>
+        <td>${reverseReducedValue}</td>
+        <td>${x6OrdinalValue}</td>
+        <td>${x6ReverseValue}</td>
+        <td>${thirtySixOrdinalValue}</td>
+        <td>${thirtySixReverseValue}</td>
+        <td>${latinValue}</td>
+        <td>${chaldeanValue}</td>`;
+}
+
+// Add event listener for Enter key
+document.getElementById("wordInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        calculateValues();
+    }
+});
+
+// Function to export table to Excel
+function exportTableToExcel(tableID, filename = '') {
+    let table = document.getElementById(tableID);
+    let workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+    XLSX.writeFile(workbook, filename ? `${filename}.xlsx` : 'excel_data.xlsx');
+}
+
+// Function to load the cipher table based on selected cipher
+function loadCipherTable(cipher) {
+    const cipherValues = {
+        englishOrdinalValues: {
+            a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9,
+            j: 10, k: 11, l: 12, m: 13, n: 14, o: 15, p: 16, q: 17, r: 18,
+            s: 19, t: 20, u: 21, v: 22, w: 23, x: 24, y: 25, z: 26
+        },
+        reverseOrdinalValues: {
+            z: 1, y: 2, x: 3, w: 4, v: 5, u: 6, t: 7, s: 8, r: 9,
+            q: 10, p: 11, o: 12, n: 13, m: 14, l: 15, k: 16, j: 17, i: 18,
+            h: 19, g: 20, f: 21, e: 22, d: 23, c: 24, b: 25, a: 26
+        },
+        reductionValues: {
+            a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9,
+            j: 1, k: 2, l: 3, m: 4, n: 5, o: 6, p: 7, q: 8, r: 9,
+            s: 1, t: 2, u: 3, v: 4, w: 5, x: 6, y: 7, z: 8
+        },
+        reverseReductionValues: {
+            a: 8, b: 7, c: 6, d: 5, e: 4, f: 3, g: 2, h: 1, i: 9,
+            j: 8, k: 7, l: 6, m: 5, n: 4, o: 3, p: 2, q: 1, r: 9,
+            s: 8, t: 7, u: 6, v: 5, w: 4, x: 3, y: 2, z: 1
+        },
+        x6OrdinalValues: {
+            a: 6, b: 12, c: 18, d: 24, e: 30, f: 36, g: 42, h: 48, i: 54,
+            j: 60, k: 66, l: 72, m: 78, n: 84, o: 90, p: 96, q: 102, r: 108,
+            s: 114, t: 120, u: 126, v: 132, w: 138, x: 144, y: 150, z: 156
+        },
+        x6ReverseValues: {
+            z: 6, y: 12, x: 18, w: 24, v: 30, u: 36, t: 42, s: 48, r: 54,
+            q: 60, p: 66, o: 72, n: 78, m: 84, l: 90, k: 96, j: 102, i: 108,
+            h: 114, g: 120, f: 126, e: 132, d: 138, c: 144, b: 150, a: 156
+        },
+        thirtySixOrdinalValues: {
+            a: 36, b: 37, c: 38, d: 39, e: 40, f: 41, g: 42, h: 43, i: 44,
+            j: 45, k: 46, l: 47, m: 48, n: 49, o: 50, p: 51, q: 52, r: 53,
+            s: 54, t: 55, u: 56, v: 57, w: 58, x: 59, y: 60, z: 61
+        },
+        thirtySixReverseValues: {
+            z: 36, y: 37, x: 38, w: 39, v: 40, u: 41, t: 42, s: 43, r: 44,
+            q: 45, p: 46, o: 47, n: 48, m: 49, l: 50, k: 51, j: 52, i: 53,
+            h: 54, g: 55, f: 56, e: 57, d: 58, c: 59, b: 60, a: 61
+        },
+        latinValues: {
+            a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, k: 10, l: 20, m: 30, n: 40, 
+            o: 50, p: 60, q: 70, r: 80, s: 90, t: 100, u: 200, x: 300, y: 400, z: 500, 
+            j: 600, v: 700, "&": 800, w: 900
+        },
+        chaldeanValues: {
+            a: 1, b: 2, c: 3, d: 4, e: 5, f: 8, g: 3, h: 5, i: 1, j: 1, k: 2, l: 3, m: 4, n: 5, 
+            o: 7, p: 8, q: 1, r: 2, s: 3, t: 4, u: 6, v: 6, w: 6, x: 5, y: 1, z: 7
+        }
+    };
+
+    let tableBody = document.getElementById("cipherTableBody");
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    let selectedCipher = cipherValues[cipher];
+    let lettersRow = document.createElement("tr");
+    let valuesRow = document.createElement("tr");
+
+    for (let letter in selectedCipher) {
+        let letterCell = document.createElement("td");
+        let valueCell = document.createElement("td");
+
+        letterCell.textContent = letter.toUpperCase();
+        valueCell.textContent = selectedCipher[letter];
+
+        lettersRow.appendChild(letterCell);
+        valuesRow.appendChild(valueCell);
+
+        if (lettersRow.children.length === 4) { // Adjust for the number of columns per row
+            tableBody.appendChild(lettersRow);
+            tableBody.appendChild(valuesRow);
+            lettersRow = document.createElement("tr");
+            valuesRow = document.createElement("tr");
+        }
+    }
+
+    if (lettersRow.children.length > 0) {
+        tableBody.appendChild(lettersRow);
+        tableBody.appendChild(valuesRow);
+    }
+}
+
+// Default load of English Ordinal cipher
+document.addEventListener("DOMContentLoaded", function() {
+    loadCipherTable('englishOrdinalValues');
+});
+
+</script>
+
+</body>
+</html>
