@@ -220,7 +220,9 @@
 <script>
 // Function to calculate values
 function calculateValues() {
-    let word = document.getElementById("wordInput").value.toLowerCase();
+    let rawWord = document.getElementById("wordInput").value; // Preserve the original input
+    let word = rawWord.toLowerCase(); // Process input for calculations
+
     let normalValue = 0;
     let reverseValue = 0;
     let reducedValue = 0;
@@ -232,7 +234,7 @@ function calculateValues() {
     let latinValue = 0;
     let chaldeanValue = 0;
 
-    // Predefined values for reduction, reverse reduction, Latin, and Chaldean ciphers
+    // Cipher values for letters
     const reductionValues = {
         a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9,
         j: 1, k: 2, l: 3, m: 4, n: 5, o: 6, p: 7, q: 8, r: 9,
@@ -258,63 +260,58 @@ function calculateValues() {
     };
 
     const latinValues = {
-        a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, k: 10, l: 20, m: 30, n: 40, 
-        o: 50, p: 60, q: 70, r: 80, s: 90, t: 100, u: 200, x: 300, y: 400, z: 500, 
+        a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, k: 10, l: 20, m: 30, n: 40,
+        o: 50, p: 60, q: 70, r: 80, s: 90, t: 100, u: 200, x: 300, y: 400, z: 500,
         j: 600, v: 700, "&": 800, w: 900
     };
 
     const chaldeanValues = {
-        a: 1, b: 2, c: 3, d: 4, e: 5, f: 8, g: 3, h: 5, i: 1, j: 1, k: 2, l: 3, m: 4, n: 5, 
+        a: 1, b: 2, c: 3, d: 4, e: 5, f: 8, g: 3, h: 5, i: 1, j: 1, k: 2, l: 3, m: 4, n: 5,
         o: 7, p: 8, q: 1, r: 2, s: 3, t: 4, u: 6, v: 6, w: 6, x: 5, y: 1, z: 7
     };
 
-    // Helper function to convert numbers into their cipher value
-    function convertNumberToCipher(number) {
-        return parseInt(number); // Use numbers as they are
-    }
-
-    // Process the word input and extract consecutive numbers
+    // Split the input into words and numbers
     let i = 0;
     while (i < word.length) {
-        let char = word[i];
-
-        if (/\d/.test(char)) {
-            // Handle consecutive numbers
+        if (/[a-z]/.test(word[i])) {
+            // Process letters
+            let char = word[i];
+            let charCode = char.charCodeAt(0) - 96; // 'a' = 1, 'z' = 26
+            normalValue += charCode;
+            reverseValue += 27 - charCode;
+            reducedValue += reductionValues[char] || 0;
+            reverseReducedValue += reverseReductionValues[char] || 0;
+            x6OrdinalValue += charCode * 6;
+            x6ReverseValue += (27 - charCode) * 6;
+            thirtySixOrdinalValue += thirtySixOrdinalValues[char] || 0;
+            thirtySixReverseValue += thirtySixReverseValues[char] || 0;
+            latinValue += latinValues[char] || 0;
+            chaldeanValue += chaldeanValues[char] || 0;
+            i++;
+        } else if (/\d/.test(word[i])) {
+            // Process numbers
             let numStr = '';
             while (i < word.length && /\d/.test(word[i])) {
                 numStr += word[i];
                 i++;
             }
-            let numberValue = convertNumberToCipher(numStr);
-            normalValue += numberValue;
-            reverseValue += numberValue;
-            reducedValue += numberValue;
-            reverseReducedValue += numberValue;
-            x6OrdinalValue += numberValue ;
-            x6ReverseValue += numberValue ;
-            thirtySixOrdinalValue += numberValue;
-            thirtySixReverseValue += numberValue;
-            latinValue += numberValue;
-            chaldeanValue += numberValue;
-        } else if (reductionValues[char] !== undefined) {
-            let charCode = word.charCodeAt(i) - 96;
-            normalValue += charCode;
-            reverseValue += 27 - charCode;
-            reducedValue += reductionValues[char];
-            reverseReducedValue += reverseReductionValues[char];
-            x6OrdinalValue += charCode * 6;
-            x6ReverseValue += (27 - charCode) * 6;
-            thirtySixOrdinalValue += thirtySixOrdinalValues[char];
-            thirtySixReverseValue += thirtySixReverseValues[char];
-            latinValue += latinValues[char] || 0;
-            chaldeanValue += chaldeanValues[char] || 0;
-            i++;
+            let number = parseInt(numStr, 10); // Combine consecutive digits into a single number
+            normalValue += number;
+            reverseValue += number;
+            reducedValue += number;
+            reverseReducedValue += number;
+            x6OrdinalValue += number;
+            x6ReverseValue += number;
+            thirtySixOrdinalValue += number;
+            thirtySixReverseValue += number;
+            latinValue += number;
+            chaldeanValue += number;
         } else {
             i++;
         }
     }
 
-    // Display results in individual boxes
+    // Display results in individual result boxes
     document.getElementById("normalValueBox").textContent = "Ordinal: " + normalValue;
     document.getElementById("reverseValueBox").textContent = "Reverse Ordinal: " + reverseValue;
     document.getElementById("reducedValueBox").textContent = "Reduction: " + reducedValue;
@@ -326,12 +323,11 @@ function calculateValues() {
     document.getElementById("latinBox").textContent = "Latin: " + latinValue;
     document.getElementById("chaldeanBox").textContent = "Chaldean: " + chaldeanValue;
 
-    // Add the calculated values to the results table
+    // Add results to the results table
     let tableBody = document.querySelector("#resultsTable tbody");
     let newRow = tableBody.insertRow();
-
-    newRow.innerHTML = 
-        `<td>${word}</td>
+    newRow.innerHTML = `
+        <td>${rawWord}</td>
         <td>${normalValue}</td>
         <td>${reverseValue}</td>
         <td>${reducedValue}</td>
@@ -341,8 +337,11 @@ function calculateValues() {
         <td>${thirtySixOrdinalValue}</td>
         <td>${thirtySixReverseValue}</td>
         <td>${latinValue}</td>
-        <td>${chaldeanValue}</td>`;
+        <td>${chaldeanValue}</td>
+    `;
 }
+
+
 
 // Add event listener for Enter key
 document.getElementById("wordInput").addEventListener("keypress", function(event) {
